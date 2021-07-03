@@ -1,0 +1,10 @@
+git init 
+git remote add origin https://github.com/abimaelneto/arvore-b.git - adiciona endereço do repositório remoto
+git remote -v - verifica que deu certo
+git pull - pega os arquivos que estão no remoto
+
+~atualiza os seus arquivos~
+git add caminho/para/arquivos
+git commit -m "sua mensagem"
+
+git push --set-upstream origin master
