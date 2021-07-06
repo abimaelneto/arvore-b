@@ -13,3 +13,10 @@ int buscaVeiculo(); //5
 int buscaLinha(); //6
 int insereVeiculos(); //7
 int insereLinhas(); //8
+
+int criaArvoreVeiculos(); //9
+int criaArvoreLinhas(); //10 
+int buscaArvoreVeiculos(); //11
+int buscaArvoreLinhas(); //12
+int insereVeiculosArvore(); //13
+int insereLinhasArvore(); //14
