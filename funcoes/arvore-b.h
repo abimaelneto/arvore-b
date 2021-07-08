@@ -1,6 +1,6 @@
-#ifndef _funcoes_
+#ifndef _cabecalhoArvore_
 
-#define _funcoes_
+#define _cabecalhoArvore_
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +11,7 @@ typedef struct{
     int noRaiz;
     int RRNproxNo;
     char lixo[68]; 
-} ArvoreCabecalho;
+} CabecalhoArvore;
 
 typedef struct{
     char folha; //1 para folha e 0 para não-folha
@@ -31,5 +31,14 @@ typedef struct{
     int Pr4;
     int P5; 
 } NoArvore;
+
+
+typedef struct {
+    int C; 
+    int Pr;
+    int RRN; //RRN do nó onde a chave se encontra
+} Chave;
+
+void insereVeiculoNaArvore(FILE* fb, CabecalhoArvore* cabecalhoArvore, int prefixoConvertido, int byteOffset);
 
 #endif
