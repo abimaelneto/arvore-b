@@ -1,6 +1,6 @@
-#ifndef _funcoes_
+#ifndef _veiculos_
 
-#define _funcoes_
+#define _veiculos_
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

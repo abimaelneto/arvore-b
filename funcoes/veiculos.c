@@ -1,3 +1,7 @@
+#ifndef _veiculoFuncoes_
+
+#define _veiculoFuncoes_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -187,9 +191,9 @@ Veiculo** readCsvFileVeiculo(FILE* fp, int* nVeiculos, CabecalhoVeiculo* cabecal
 Veiculo* readBinaryHeaderVeiculo(FILE* fp, CabecalhoVeiculo* cabecalhoVeiculo) {
     fread(&(cabecalhoVeiculo->byteProxReg), sizeof(long int), 1, fp);
     fread(&(cabecalhoVeiculo->nroRegistros), sizeof(int), 1, fp);
+    printf("%d\n", cabecalhoVeiculo->nroRegistros);
     fread(&(cabecalhoVeiculo->nroRegRemovidos), sizeof(int), 1, fp);
     fread(cabecalhoVeiculo->descrevePrefixo, sizeof(char), 18, fp);
-    //printf("%s\n", descrevePrefixo);
     fread(cabecalhoVeiculo->descreveData, sizeof(char), 35, fp);
     fread(cabecalhoVeiculo->descreveLugares, sizeof(char), 42, fp);
     fread(cabecalhoVeiculo->descreveLinha, sizeof(char), 26, fp);
@@ -377,3 +381,5 @@ void FreeVeiculos(Veiculo** Veiculo, int nVeiculos){
     }
     free(Veiculo);
 }
+
+#endif

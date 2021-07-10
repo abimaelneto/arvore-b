@@ -18,9 +18,9 @@ int main(void) {
 
     //le o numero da funcao e seleciona
     int selecionaFuncao = 0; //seleciona de 1 a 8
-    scanf("%d", &selecionaFuncao); //seleciona funcao
-    scanf("%*c"); //le espaco
-
+    // scanf("%d", &selecionaFuncao); //seleciona funcao
+    // scanf("%*c"); //le espaco
+    selecionaFuncao = 9;
     //chama a funcionalidade do trabalho
     switch(selecionaFuncao) {
         case 1:

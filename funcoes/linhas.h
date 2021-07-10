@@ -1,6 +1,6 @@
-#ifndef _readWrite_
+#ifndef _linhas_
 
-#define _readWrite_
+#define _linhas_
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

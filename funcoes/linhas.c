@@ -1,6 +1,6 @@
-#ifndef _linha_
+#ifndef _linhaFuncoes_
 
-#define _linha_
+#define _linhaFuncoes_
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
