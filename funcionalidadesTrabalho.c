@@ -738,15 +738,17 @@ int criaArvoreVeiculos() {
         int totalRegistros = cabecalhoVeiculo->nroRegistros;
         for(int cont = 0; cont < totalRegistros; cont++) {
          
-         //for(int cont = 0; cont < 6; cont++) {
-            
+        //  for(int cont = 0; cont < 10; cont++) {
+            printf("\n--------");
+            printf("\nIteração: %d\n", cont);
+            printf("Nó Raiz: %d\n", noRaiz->RRNdoNo);
             //le o registro atual
             Veiculo* veiculo = (Veiculo* ) malloc(sizeof(Veiculo));
             readBinaryDataRegisterVeiculo(fw, veiculo);
             
             // se não foi removido, insere na árvore
             if(veiculo->removido == '1'){
-        
+                
                 //converte o prefixo para inteiro e lê byteoffset
                 int prefixoConvertido = convertePrefixo(veiculo->prefixo);
                 int byteOffsetVeiculo = ftell(fw);
@@ -754,7 +756,7 @@ int criaArvoreVeiculos() {
                 //cria chave com prefixo e byteOffset. inicialmente vai tentar inserir no nó raiz
                 Chave* chaveAInserir = malloc(sizeof(Chave));
                 
-                chaveAInserir->RRN = noRaiz->RRNdoNo;
+                chaveAInserir->P = -1;
                 chaveAInserir->C = prefixoConvertido;
                 chaveAInserir->Pr = byteOffsetVeiculo;
                 
@@ -766,6 +768,7 @@ int criaArvoreVeiculos() {
                     cabecalhoArvore,
                     noRaiz,
                     chaveAInserir);
+                    
                 free(chaveAInserir);
             }
 

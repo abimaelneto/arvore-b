@@ -18,6 +18,28 @@ void writeHeaderTreeVeiculo(FILE* fb, CabecalhoArvore* cabecalhoArvore) {
     fwrite(&(cabecalhoArvore->lixo), sizeof(char), 68, fb);
 }
 
+void inicializaNoArvore(NoArvore* noArvore, int eFolha, CabecalhoArvore* cabecalhoArvore) {
+    
+    noArvore->folha = eFolha; //'1' para folha e '0' para não-folha
+    noArvore->nroChavesIndexadas = 0;
+    
+    noArvore->P1 = -1; 
+    noArvore->C1 = -1;
+    noArvore->Pr1 = -1;
+    noArvore->P2 = -1;
+    noArvore->C2 = -1;
+    noArvore->Pr2 = -1;
+    noArvore->P3 = -1;
+    noArvore->C3 = -1;
+    noArvore->Pr3 = -1;
+    noArvore->P4 = -1;
+    noArvore->C4 = -1;
+    noArvore->Pr4 = -1;
+    noArvore->P5 = -1;
+    
+}
+
+
 
 void readNoArvore(FILE* fb, NoArvore* noArvore) {
     fread(&(noArvore->folha), sizeof(char), 1, fb); 
