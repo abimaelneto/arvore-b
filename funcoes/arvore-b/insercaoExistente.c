@@ -15,7 +15,7 @@ void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Ch
     NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
     inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
     noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
-    printf("\nNó raiz:%x\n", noRaiz->RRNdoNo);
+    
     //se o nó raiz sofreu split, é preciso criar nova raiz
     
     int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chaveAInserir, cabecalhoArvore);
@@ -42,8 +42,6 @@ void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Ch
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
         writeNoArvore(fb, noRaiz, cabecalhoArvore);  
 
-        printf("\nNova raiz!\n");
-        printNoArvore(noRaiz);
     }
 
     free(noRaiz);
@@ -64,7 +62,6 @@ void leVeiculoASerInserido(Veiculo* veiculo) {
     scan_quote_string(veiculo->modelo);
     scanf("%*c"); // le espaco  
     scan_quote_string(veiculo->categoria);
-
 
     //escreve lixo se o campo for nulo
     if(veiculo->data[0] == '\0') {

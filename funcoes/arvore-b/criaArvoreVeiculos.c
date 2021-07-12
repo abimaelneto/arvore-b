@@ -10,13 +10,12 @@
 #include "./insercao.h"
 #include "../veiculos.h"
 
-
 void insereChaveEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir) {
     
     NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
     inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
     noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
-    printf("\nNó raiz:%x\n", noRaiz->RRNdoNo);
+    
     //se o nó raiz sofreu split, é preciso criar nova raiz
     int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chaveAInserir, cabecalhoArvore);
     
@@ -42,9 +41,8 @@ void insereChaveEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* 
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
         writeNoArvore(fb, noRaiz, cabecalhoArvore);  
 
-        printf("\nNova raiz!\n");
-        printNoArvore(noRaiz);
     }
+    
     free(noRaiz);
 }
 
@@ -58,20 +56,11 @@ int desceNaArvore(
     //pulamos para o nó a ser lido e lemos para a RAM
     int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noArvore->RRNdoNo);
     fseek(fb, byteOffsetNoArvore, SEEK_SET);
-    printf("RRN atual: %d\n", noArvore->RRNdoNo);
     readNoArvore(fb, noArvore);
-    
-    printf("Antes da inserção\n");
-    printNoArvore(noArvore);
-    
+
     //flag que indicará se houve split no nó atual
     int houveSplitNoAtual = 0;
 
-    //logs
-    printf("Chave a inserir: %x\n", chaveAInserir->C);
-    printf("Ponteiro da chave: %x\n", chaveAInserir->P);
-    printf("RRN atual: %d\n", noArvore->RRNdoNo);
-    
     int RRNNoBusca = -3;
         
     if(chaveAInserir->C < noArvore->C1) {
@@ -91,24 +80,22 @@ int desceNaArvore(
         RRNNoBusca = noArvore->P5;
     }
     //apenas para debug. Significa que não conseguiu relacionar qual chave era maior de forma correta
-    if (RRNNoBusca == -3) {
-        printf("ERRO DE COMPARAÇÃO DE CHAVES!\n");
-    }
+    // if (RRNNoBusca == -3) {
+    //     printf("ERRO DE COMPARAÇÃO DE CHAVES!\n");
+    // }
 
     // se o nó não for folha, faz a busca pelo nó folha
     if(noArvore->folha != '1') {
         
         //verifica possível erro no programa
-        if(RRNNoBusca == -1) {
-            printf("ERRO: está tratando como folha");
-        }
+        // if(RRNNoBusca == -1) {
+        //     printf("ERRO: está tratando como folha");
+        // }
         
         //cria nó vazio, que lerá o conteúdo do filho
         NoArvore* noFilho = (NoArvore*) malloc(sizeof(NoArvore));
         inicializaNoArvore(noFilho, '0', cabecalhoArvore);
         noFilho->RRNdoNo = RRNNoBusca;
-
-        printf("RRN do filho: %d\n", noFilho->RRNdoNo);
         
         //flag que indica se uma chave foi promovida
         int houveSplitNoFilho = desceNaArvore(fb, noFilho, chaveAInserir, cabecalhoArvore);
@@ -125,13 +112,8 @@ int desceNaArvore(
         //se a inserção retornar um split, quer dizer que é preciso inserir a chave promovida no nó atual
         houveSplitNoAtual = insereChave(fb, noArvore, chaveAInserir, cabecalhoArvore, RRNNoBusca);        
     }
-    printf("\nDepois da inserção\n");
-    printNoArvore(noArvore);
 
     return houveSplitNoAtual;
 }
-
-
-
 
 #endif
