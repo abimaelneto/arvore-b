@@ -57,9 +57,7 @@ void printNoArvore(NoArvore* noArvore);
 
 //criacao da arvore
 void inicializaNoArvore(NoArvore* noArvore, int eFolha, CabecalhoArvore* cabecalhoArvore);
-int busca( FILE* fb, int RRNNoBusca, NoArvore* noPai, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
 int desceNaArvore(FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
-
 
 //insere veiculo na arvore
 int desceNaArvore(FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
