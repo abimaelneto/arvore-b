@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../veiculos.h"
+#include "../linhas.h"
+
+#define TAM_PAG_DISCO 77
+
 //struct conforme determinado no trabalho
 typedef struct{
     char status;
@@ -19,16 +24,16 @@ typedef struct{
     int RRNdoNo;
     int P1; 
     int C1; 
-    int Pr1; 
+    long int Pr1; 
     int P2; 
     int C2; 
-    int Pr2;
+    long int Pr2;
     int P3; 
     int C3; 
-    int Pr3;
+    long int Pr3;
     int P4; 
     int C4; 
-    int Pr4;
+    long int Pr4;
     int P5; 
 } NoArvore;
 
@@ -41,19 +46,24 @@ typedef struct {
 
 
 //genericas
-void writeHeaderTreeVeiculo(FILE* fb, CabecalhoArvore* cabecalhoArvore);
+void writeHeaderTree(FILE* fb, CabecalhoArvore* cabecalhoArvore);
+void readHeaderTree(FILE* fb, CabecalhoArvore* cabecalhoArvore);
+
 void readNoArvore(FILE* fb, NoArvore* noArvore);
 void writeNoArvore(FILE* fb, NoArvore* noArvore, CabecalhoArvore* cabecalhoArvore);
 
+void printNoArvore(NoArvore* noArvore);
+
+
 //criacao da arvore
-void insereVeiculoNaArvore(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArvore* noRaiz, Chave* chaveAInserir);
+void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArvore* noRaiz, Chave* chaveAInserir);
 void inicializaNoArvore(NoArvore* noArvore, int eFolha, CabecalhoArvore* cabecalhoArvore);
 int busca( FILE* fb, int RRNNoBusca, NoArvore* noPai, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
 int desceNaArvore(FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
-int insereChave(FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore, int RRNNoBusca);
-void insereChaveEmNoComEspaco(NoArvore* noArvore, Chave* chaveAInserir, int RRNNoBusca);
-void split( FILE* fb, NoArvore* noArvore, NoArvore* noSplit, Chave* chaveAInserir);
-void ordenaChavesParaSplit( NoArvore* noArvore, Chave* chaveAInserir, int* chaves, int* byteOffsets, int* ponteiros);
-void criaNo(FILE* fb, NoArvore* noASerCriado, Chave* chaveAInserir);
+
+
+//insere veiculo na arvore
+int desceNaArvore(FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
+
 
 #endif

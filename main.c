@@ -13,14 +13,15 @@
 #include "./funcoes/veiculos.h" //funcoes que manipulam veiculos
 #include "./funcoesAux.h" //auxiliares - strings e binarioNaTela
 #include "./funcionalidadesTrabalho.h" //funcionalidades de 1 a 8
+#include "./funcoes/arvore-b/arvore-b.h" //funcionalidades de 1 a 8
 
 int main(void) {
 
     //le o numero da funcao e seleciona
     int selecionaFuncao = 0; //seleciona de 1 a 8
-    // scanf("%d", &selecionaFuncao); //seleciona funcao
-    // scanf("%*c"); //le espaco
-    selecionaFuncao = 9;
+    scanf("%d", &selecionaFuncao); //seleciona funcao
+    scanf("%*c"); //le espaco
+    // selecionaFuncao = 13;
     //chama a funcionalidade do trabalho
     switch(selecionaFuncao) {
         case 1:
@@ -63,7 +64,7 @@ int main(void) {
             insereVeiculosArvore();
             break;
         case 14:
-            insereLinhas();
+            insereLinhasArvore();
             break;
     }
     

@@ -1,5 +1,5 @@
 all:
-	gcc -o programaTrab $(wildcard *.c)
+	gcc -o programaTrab *.c)
 
 run:
 	./programaTrab

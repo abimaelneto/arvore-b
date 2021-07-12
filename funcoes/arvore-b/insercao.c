@@ -1,123 +1,12 @@
-#ifndef _arvore_
+#ifndef _funcoesInsercaoArvore_
 
-#define _arvore_
+#define _funcoesInsercaoArvore_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "arvore-b.h"
-
-#define TAM_PAG_DISCO 77
-
-
-void insereVeiculoNaArvore(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArvore* noRaiz, Chave* chaveAInserir) {
-    
-    //se o nó raiz sofreu split, é preciso criar nova raiz
-    int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chaveAInserir, cabecalhoArvore);
-    
-    if (houveSplitNoAtual != 0) {
-        printf("Cria nova raiz\n");
-    
-        //cria nova raiz
-        int RRNRaizAntiga = noRaiz->RRNdoNo;
-        inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
-        noRaiz->P1 = RRNRaizAntiga;
-        noRaiz->C1 = chaveAInserir->C;
-        noRaiz->Pr1 = chaveAInserir->Pr;
-        noRaiz->P2 = chaveAInserir->P; //guarda o nó criado no split
-
-        noRaiz->RRNdoNo = cabecalhoArvore->RRNproxNo;
-        noRaiz->nroChavesIndexadas++;
-        cabecalhoArvore->RRNproxNo++;
-        cabecalhoArvore->noRaiz = noRaiz->RRNdoNo;
-        
-        //pulamos para o nó onde houve a inserção e escrevemos no disco
-        int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noRaiz->RRNdoNo);
-        
-        //pulamos para o nó a ser lido
-        fseek(fb, byteOffsetNoArvore, SEEK_SET);
-        writeNoArvore(fb, noRaiz, cabecalhoArvore);
-        
-    }
-
-
-}
-
-
-//retorna 1 se houve split
-int desceNaArvore(FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore) {
-    
-    //pulamos para o nó a ser lido e lemos para a RAM
-    int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noArvore->RRNdoNo);
-    fseek(fb, byteOffsetNoArvore, SEEK_SET);
-    readNoArvore(fb, noArvore);
-
-    //flag que indicará se houve split no nó atual
-    int houveSplitNoAtual = 0;
-
-    //logs
-    printf("Chave a inserir: %x\n", chaveAInserir->C);
-    printf("Folha: %c\n", noArvore->folha);
-    printf("RRN atual: %d\n", noArvore->RRNdoNo);
-    
-    int RRNNoBusca = 0;
-        
-    if(chaveAInserir->C < noArvore->C1) {
-        RRNNoBusca = noArvore->P1;
-    }
-    else if (chaveAInserir->C < noArvore->C2 || noArvore-> C2 == -1) {
-        RRNNoBusca = noArvore->P2;
-        
-    }
-    else if (chaveAInserir->C < noArvore->C3 || noArvore-> C3 == -1) {
-        RRNNoBusca = noArvore->P3;
-    }
-    else if (chaveAInserir->C < noArvore->C4 || noArvore-> C4 == -1) {
-        RRNNoBusca = noArvore->P4;
-    }
-    else {
-        RRNNoBusca = noArvore->P5;
-    }
-    
-    if (RRNNoBusca == 0) {
-        printf("ERRO DE COMPARAÇÃO DE CHAVES!\n");
-    }
-
-    // se o nó não for folha, faz a busca pelo nó folha
-    if(noArvore->folha != '1') {
-        
-        //verifica possível erro no programa
-        if(RRNNoBusca == -1) {
-            printf("ERRO: está tratando como folha");
-        }
-        
-        //cria nó vazio, que lerá o conteúdo do filho
-        NoArvore* noFilho = (NoArvore*) malloc(sizeof(NoArvore));
-        inicializaNoArvore(noFilho, '0', cabecalhoArvore);
-        noFilho->RRNdoNo = RRNNoBusca;
-
-        printf("RRN do filho: %d\n", noFilho->RRNdoNo);
-        
-        //flag que indica se uma chave foi promovida
-        int houveSplitNoFilho = desceNaArvore(fb, noFilho, chaveAInserir, cabecalhoArvore);
-        
-        if (houveSplitNoFilho != 0) {
-            //insere a chave a ser promovida no nó atual, não no filho
-            houveSplitNoAtual = insereChave(fb, noArvore, chaveAInserir, cabecalhoArvore, RRNNoBusca);
-            
-        }
-    }
- 
-    //se for folha, insere 
-    else{
-        //se a inserção retornar um split, quer dizer que é preciso inserir a chave promovida no nó atual
-        houveSplitNoAtual = insereChave(fb, noArvore, chaveAInserir, cabecalhoArvore, RRNNoBusca);        
-    }
-    
- 
-    return houveSplitNoAtual;
-}
+#include "./insercao.h"
 
 int insereChave(
     FILE* fb,
@@ -130,14 +19,17 @@ int insereChave(
     if( noArvore->nroChavesIndexadas < 4) {
         
         insereChaveEmNoComEspaco(noArvore, chaveAInserir, RRNNoBusca);
-        
+        printf("INSERIU EM RRN: %d\n", noArvore->RRNdoNo);
         //pulamos para o nó onde houve a inserção e escrevemos no disco
         int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noArvore->RRNdoNo);
         
         //pulamos para o nó a ser escrito
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
-        writeNoArvore(fb, noArvore, cabecalhoArvore);
-        
+        printf("não está salvando no arquivo de árvore");
+        //writeNoArvore(fb, noArvore, cabecalhoArvore);
+        if(noArvore->P5 == 0) {
+            printf("PELO AMOR DE DEUS, RRN");
+        }
         //não houve split
         return 0;
     }
@@ -150,7 +42,7 @@ int insereChave(
         inicializaNoArvore(noSplit, noArvore->folha, cabecalhoArvore);
         noSplit->RRNdoNo = cabecalhoArvore->RRNproxNo;
         cabecalhoArvore->RRNproxNo++;
-        printf("RRN do noSplit: %d\n", noSplit->RRNdoNo);
+        printf("RRN do nó que sofreu Split: %d\n", noArvore->RRNdoNo);
 
         //organiza as chaves entre o nó antigo e o novo
         //atualiza chaveAInserir para a chave que está sendo promovida
@@ -160,20 +52,21 @@ int insereChave(
         int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noArvore->RRNdoNo);
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
         writeNoArvore(fb, noArvore, cabecalhoArvore);
-        
+
         //pulamos para o nó criado no split e escreve no disco
         byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noSplit->RRNdoNo);
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
         writeNoArvore(fb, noSplit, cabecalhoArvore);
         
-        if(noArvore->nroChavesIndexadas != 2 || noSplit->nroChavesIndexadas != 2) {
-            printf("sdfjkhdjkflahsjkdfhjaskldhfjklahsdkfhaljksdfhklajsdhfjkasdhfjkhas");
-        }
+        printf("\nNó split\n");
+        printNoArvore(noSplit);
+
         free(noSplit);
 
         return 1;
     }
 }
+
 
 void insereChaveEmNoComEspaco(NoArvore* noArvore, Chave* chaveAInserir, int RRNNoBusca) {
     
@@ -254,7 +147,7 @@ void split(
     Chave* chaveAInserir)
 {
     
-    int* ponteiros = malloc(sizeof(int)*6);
+    int* ponteiros = malloc(sizeof(int)*5);
     int* chaves = malloc(sizeof(int)*5);
     int* byteOffsets = malloc(sizeof(int)*5);
 
@@ -272,9 +165,8 @@ void split(
     noArvore->C4 = -1;
     
     //atualizar ponteiros e P
-    noArvore->P1 = ponteiros[0];
-    noArvore->P2 = ponteiros[1];
-    noArvore->P3 = ponteiros[2];
+    noArvore->P2 = ponteiros[0];
+    noArvore->P3 = ponteiros[1];
     noArvore->P4 = -1;
     noArvore->P5 = -1;
 
@@ -289,9 +181,9 @@ void split(
     noSplit->C3 = -1;
     noSplit->C4 = -1;
 
-    noSplit->P1 = ponteiros[3];
-    noSplit->P2 = ponteiros[4];
-    noSplit->P3 = ponteiros[5];
+    noSplit->P1 = ponteiros[2];
+    noSplit->P2 = ponteiros[3];
+    noSplit->P3 = ponteiros[4];
     noSplit->P4 = -1;
     noSplit->P5 = -1;
 
@@ -326,11 +218,10 @@ void ordenaChavesParaSplit(
     chaves[4] = noArvore->C4;
 
     ponteiros[0] = chaveAInserir->P;
-    ponteiros[1] = noArvore->P1;
-    ponteiros[2] = noArvore->P2;
-    ponteiros[3] = noArvore->P3;
-    ponteiros[4] = noArvore->P4;
-    ponteiros[5] = noArvore->P5;
+    ponteiros[1] = noArvore->P2;
+    ponteiros[2] = noArvore->P3;
+    ponteiros[3] = noArvore->P4;
+    ponteiros[4] = noArvore->P5;
 
     byteOffsets[0] = chaveAInserir->Pr;
     byteOffsets[1] = noArvore->Pr1;
@@ -356,12 +247,12 @@ void ordenaChavesParaSplit(
                     
         }
     }    
-    //se a chave nova está na última posição, troca também o ponteiro para a última posição
-    if(chaves[4] == chaveAInserir->C) {
-        int tempP = ponteiros[5];
-        ponteiros[5] = ponteiros[4];
-        ponteiros[4] = tempP;
-    }
+    // //se a chave nova está na última posição, troca também o ponteiro para a última posição
+    // if(chaves[4] == chaveAInserir->C) {
+    //     int tempP = ponteiros[5];
+    //     ponteiros[5] = ponteiros[4];
+    //     ponteiros[4] = tempP;
+    // }
 
 }
 

@@ -191,7 +191,7 @@ Veiculo** readCsvFileVeiculo(FILE* fp, int* nVeiculos, CabecalhoVeiculo* cabecal
 Veiculo* readBinaryHeaderVeiculo(FILE* fp, CabecalhoVeiculo* cabecalhoVeiculo) {
     fread(&(cabecalhoVeiculo->byteProxReg), sizeof(long int), 1, fp);
     fread(&(cabecalhoVeiculo->nroRegistros), sizeof(int), 1, fp);
-    printf("%d\n", cabecalhoVeiculo->nroRegistros);
+    //printf("%d\n", cabecalhoVeiculo->nroRegistros);
     fread(&(cabecalhoVeiculo->nroRegRemovidos), sizeof(int), 1, fp);
     fread(cabecalhoVeiculo->descrevePrefixo, sizeof(char), 18, fp);
     fread(cabecalhoVeiculo->descreveData, sizeof(char), 35, fp);

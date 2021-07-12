@@ -4,6 +4,9 @@
         "**/templates/*": "django-txt",
         "**/requirements{/**,*}.{txt,in}": "pip-requirements",
         "stdio.h": "c",
-        "arvore-b.h": "c"
+        "arvore-b.h": "c",
+        "linhas.h": "c",
+        "ctype.h": "c",
+        "stdlib.h": "c"
     }
 }

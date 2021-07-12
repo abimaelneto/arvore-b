@@ -1,0 +1,23 @@
+#ifndef _cabecalhoInsercaoArvore_
+
+#define _cabecalhoInsercaoArvore_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "./arvore-b.h"
+
+int insereChave( FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore, int RRNNoBusca);
+
+void insereChaveEmNoComEspaco(NoArvore* noArvore, Chave* chaveAInserir, int RRNNoBusca);
+void split( FILE* fb, NoArvore* noArvore, NoArvore* noSplit, Chave* chaveAInserir);
+void ordenaChavesParaSplit( NoArvore* noArvore, Chave* chaveAInserir, int* chaves, int* byteOffsets, int* ponteiros);
+
+void insereVeiculoEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir);
+void leRegistroASerInserido(Veiculo* veiculo);
+
+void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArvore* noRaiz, Chave* chaveAInserir);
+int desceNaArvore( FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
+
+#endif
