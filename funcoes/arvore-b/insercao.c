@@ -96,7 +96,6 @@ void insereChaveEmNoComEspaco(NoArvore* noArvore, Chave* chaveAInserir, int RRNN
         if(chaves[pos+1] == -1) {
             break;
         }
-        printf("TESTE %d\n", pos);
         //se for maior que o próximo, troca chave, ponteiro e byteOffset
         if(chaves[pos] > chaves[pos+1]) {
 

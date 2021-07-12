@@ -10,7 +10,7 @@
 #include "../veiculos.h"
 #include "../../funcoesAux.h"
 
-void insereVeiculoEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir) {
+void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir) {
     
     NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
     inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
@@ -50,7 +50,7 @@ void insereVeiculoEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, 
 
 }
 
-void leRegistroASerInserido(Veiculo* veiculo) {
+void leVeiculoASerInserido(Veiculo* veiculo) {
 
     //entrada do usuario
     scan_quote_string(veiculo->prefixo);
@@ -80,6 +80,25 @@ void leRegistroASerInserido(Veiculo* veiculo) {
     veiculo->tamanhoRegistro = 5 + 10 + 4*4 + veiculo->tamanhoModelo + veiculo->tamanhoCategoria;        
     veiculo->removido = '1';
         
+}
+
+void leLinhaASerInserida(Linha* linha) {
+    //entrada do usuario
+    scanf("%d", &linha->codLinha); //le nome do campo
+    scanf("%*c"); // le espaco  
+    scan_quote_string(&linha->aceitaCartao);
+    printf("ACEITA CARTÃO %c", linha->aceitaCartao);
+    scanf("%*c"); // le espaco  
+    scan_quote_string(linha->nomeLinha);
+    scanf("%*c"); // le espaco  
+    scan_quote_string(linha->corLinha);
+
+    //guarda o tamanho dos campos variaveis
+    linha->tamanhoNome = strlen(linha->nomeLinha); 
+    linha->tamanhoCor = strlen(linha->corLinha); 
+
+    linha->tamanhoRegistro = 1 + 3*4 + linha->tamanhoNome + linha->tamanhoCor;        
+    linha->removido = '1';
 }
 
 #endif
