@@ -10,14 +10,14 @@
 #include "./insercao.h"
 #include "../veiculos.h"
 
-void insereChaveEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir) {
+void insereChaveEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chave) {
     
     NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
     inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
     noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
     
     //se o nó raiz sofreu split, é preciso criar nova raiz
-    int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chaveAInserir, cabecalhoArvore);
+    int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chave, cabecalhoArvore);
     
     if (houveSplitNoAtual != 0) {
     
@@ -25,9 +25,9 @@ void insereChaveEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* 
         int RRNRaizAntiga = noRaiz->RRNdoNo;
         inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
         noRaiz->P1 = RRNRaizAntiga;
-        noRaiz->C1 = chaveAInserir->C;
-        noRaiz->Pr1 = chaveAInserir->Pr;
-        noRaiz->P2 = chaveAInserir->P; //guarda o nó criado no split
+        noRaiz->C1 = chave->C;
+        noRaiz->Pr1 = chave->Pr;
+        noRaiz->P2 = chave->P; //guarda o nó criado no split
 
         noRaiz->RRNdoNo = cabecalhoArvore->RRNproxNo;
         cabecalhoArvore->RRNproxNo++;
@@ -49,7 +49,7 @@ void insereChaveEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* 
 int desceNaArvore(
     FILE* fb,
     NoArvore* noArvore,
-    Chave* chaveAInserir,
+    Chave* chave,
     CabecalhoArvore* cabecalhoArvore)
 {
     
@@ -63,17 +63,17 @@ int desceNaArvore(
 
     int RRNNoBusca = -3;
         
-    if(chaveAInserir->C < noArvore->C1) {
+    if(chave->C < noArvore->C1) {
         RRNNoBusca = noArvore->P1;
     }
-    else if (chaveAInserir->C < noArvore->C2 || noArvore-> C2 == -1) {
+    else if (chave->C < noArvore->C2 || noArvore-> C2 == -1) {
         RRNNoBusca = noArvore->P2;
         
     }
-    else if (chaveAInserir->C < noArvore->C3 || noArvore-> C3 == -1) {
+    else if (chave->C < noArvore->C3 || noArvore-> C3 == -1) {
         RRNNoBusca = noArvore->P3;
     }
-    else if (chaveAInserir->C < noArvore->C4 || noArvore-> C4 == -1) {
+    else if (chave->C < noArvore->C4 || noArvore-> C4 == -1) {
         RRNNoBusca = noArvore->P4;
     }
     else {
@@ -98,11 +98,11 @@ int desceNaArvore(
         noFilho->RRNdoNo = RRNNoBusca;
         
         //flag que indica se uma chave foi promovida
-        int houveSplitNoFilho = desceNaArvore(fb, noFilho, chaveAInserir, cabecalhoArvore);
+        int houveSplitNoFilho = desceNaArvore(fb, noFilho, chave, cabecalhoArvore);
         
         if (houveSplitNoFilho != 0) {
             //insere a chave a ser promovida no nó atual, não no filho
-            houveSplitNoAtual = insereChave(fb, noArvore, chaveAInserir, cabecalhoArvore, RRNNoBusca);
+            houveSplitNoAtual = insereChave(fb, noArvore, chave, cabecalhoArvore, RRNNoBusca);
             
         }
     }
@@ -110,7 +110,7 @@ int desceNaArvore(
     //se for folha, insere 
     else{
         //se a inserção retornar um split, quer dizer que é preciso inserir a chave promovida no nó atual
-        houveSplitNoAtual = insereChave(fb, noArvore, chaveAInserir, cabecalhoArvore, RRNNoBusca);        
+        houveSplitNoAtual = insereChave(fb, noArvore, chave, cabecalhoArvore, RRNNoBusca);        
     }
 
     return houveSplitNoAtual;

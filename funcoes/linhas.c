@@ -182,9 +182,8 @@ Linha* readBinaryDataRegisterLinha(FILE* fw, Linha* linha) {
     }   
 }
 
-Linha* writeBinaryDataRegisterLinha(FILE* fw, Linha* teste){    
-    Linha* linha =(Linha* ) malloc(sizeof(Linha));
-    linha = teste;
+Linha* writeBinaryDataRegisterLinha(FILE* fw, Linha* linha){    
+    
     fwrite(&(linha->removido), sizeof(char), 1, fw); 
     fwrite(&(linha->tamanhoRegistro), sizeof(int), 1, fw);
     fwrite(&(linha->codLinha), sizeof(int), 1, fw);
@@ -200,7 +199,6 @@ Linha* writeBinaryDataRegisterLinha(FILE* fw, Linha* teste){
         fwrite(linha->corLinha, sizeof(char), linha->tamanhoCor, fw);     
     }
     
-    return linha;
 }
 
 CabecalhoLinha* writeBinaryHeaderLinha(FILE* fw, CabecalhoLinha* cabecalhoLinha){   

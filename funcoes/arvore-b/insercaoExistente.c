@@ -10,7 +10,7 @@
 #include "../veiculos.h"
 #include "../../funcoesAux.h"
 
-void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir) {
+void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chave) {
     
     NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
     inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
@@ -18,7 +18,7 @@ void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Ch
     
     //se o nó raiz sofreu split, é preciso criar nova raiz
     
-    int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chaveAInserir, cabecalhoArvore);
+    int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chave, cabecalhoArvore);
 
     if (houveSplitNoAtual != 0) {
     
@@ -26,9 +26,9 @@ void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Ch
         int RRNRaizAntiga = noRaiz->RRNdoNo;
         inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
         noRaiz->P1 = RRNRaizAntiga;
-        noRaiz->C1 = chaveAInserir->C;
-        noRaiz->Pr1 = chaveAInserir->Pr;
-        noRaiz->P2 = chaveAInserir->P; //guarda o nó criado no split
+        noRaiz->C1 = chave->C;
+        noRaiz->Pr1 = chave->Pr;
+        noRaiz->P2 = chave->P; //guarda o nó criado no split
 
         noRaiz->RRNdoNo = cabecalhoArvore->RRNproxNo;
         cabecalhoArvore->RRNproxNo++;
@@ -84,7 +84,6 @@ void leLinhaASerInserida(Linha* linha) {
     scanf("%d", &linha->codLinha); //le nome do campo
     scanf("%*c"); // le espaco  
     scan_quote_string(&linha->aceitaCartao);
-    printf("ACEITA CARTÃO %c", linha->aceitaCartao);
     scanf("%*c"); // le espaco  
     scan_quote_string(linha->nomeLinha);
     scanf("%*c"); // le espaco  
