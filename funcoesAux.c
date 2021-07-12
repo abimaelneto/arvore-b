@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include "funcoesAux.h"
 
-//funcoes auxiliares do programa. Tratamento de strings e binario da tela
+//dados auxiliares do programa. Tratamento de strings e binario da tela
 
 void binarioNaTela(char *nomeArquivoBinario) { /* Você não precisa entender o código dessa função. */
 

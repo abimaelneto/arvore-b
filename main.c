@@ -8,11 +8,11 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
-#include "./funcoes/linhas.h" //funcoes que manipulam linhas
-#include "./funcoes/veiculos.h" //funcoes que manipulam veiculos
+#include "./dados/linhas.h" //dados que manipulam linhas
+#include "./dados/veiculos.h" //dados que manipulam veiculos
 #include "./funcoesAux.h" //auxiliares 
-#include "./funcionalidadesTrabalho.h" //funcionalidades de 1 a 8
-#include "./funcoes/arvore-b/arvore-b.h" //funcionalidades de 1 a 8
+#include "./funcionalidades.h" //funcionalidades de 1 a 8
+#include "./arvore-b/arvore-b.h" //funcionalidades de 1 a 8
 
 int main(void) {
 

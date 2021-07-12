@@ -1,5 +1,5 @@
 all:
-	gcc -o programaTrab *.c funcoes/*.c funcoes/arvore-b/*.c
+	gcc -o programaTrab *.c dados/*.c dados/arvore-b/*.c
 
 run:
 	./programaTrab
