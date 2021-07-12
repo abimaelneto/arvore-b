@@ -11,8 +11,12 @@
 #include "../veiculos.h"
 
 
-void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArvore* noRaiz, Chave* chaveAInserir) {
+void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir) {
     
+    NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
+    inicializaNoArvore(noRaiz, '0', cabecalhoArvore);
+    noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
+    printf("\nNó raiz:%x\n", noRaiz->RRNdoNo);
     //se o nó raiz sofreu split, é preciso criar nova raiz
     int houveSplitNoAtual = desceNaArvore(fb, noRaiz, chaveAInserir, cabecalhoArvore);
     
@@ -34,18 +38,15 @@ void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArv
         //pulamos para o nó onde houve a inserção e escrevemos no disco
         int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noRaiz->RRNdoNo);
         
-        //pulamos para o nó a ser lido
+        //pulamos para o nó a ser escrito
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
         writeNoArvore(fb, noRaiz, cabecalhoArvore);  
 
         printf("\nNova raiz!\n");
         printNoArvore(noRaiz);
     }
-
+    free(noRaiz);
 }
-
-//retorna 1 se houve split
-
 
 int desceNaArvore(
     FILE* fb,
@@ -57,6 +58,7 @@ int desceNaArvore(
     //pulamos para o nó a ser lido e lemos para a RAM
     int byteOffsetNoArvore = TAM_PAG_DISCO*(1+ noArvore->RRNdoNo);
     fseek(fb, byteOffsetNoArvore, SEEK_SET);
+    printf("RRN atual: %d\n", noArvore->RRNdoNo);
     readNoArvore(fb, noArvore);
     
     printf("Antes da inserção\n");

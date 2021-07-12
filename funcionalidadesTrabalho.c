@@ -668,107 +668,99 @@ int insereLinhas() {
 
 
 int criaArvoreVeiculos() {
-
-    /*
+    
     //le arquivos da entrada do usuário
     char binaryFile[100];
     char treeFile[100];
+
     scanf("%[^ ]", binaryFile); // le nome do arquivo até espaço
     scanf("%*c"); // le espaco
     scanf("%[^\n]", treeFile); // le nome do arquivo até fim da linha
-    */
-
-    char binaryFile[100] = "veiculo1.bin";
-    char treeFile[100] = "indicePrefixo1.bin";
-    printf("funcionalidade\n");
-    //tenta abrir o binario
-    FILE* fw= fopen(binaryFile, "r+");    
+        
+    //tenta abrir arquivo de dados
+    FILE* fw= fopen(binaryFile, "rb+");    
     if(fw == NULL){
         printf("Falha no processamento do arquivo.\n");
         return EXIT_FAILURE;
     }
     
-
-    //verifica se o arquivo de veículos está consistente
-    CabecalhoVeiculo* cabecalhoVeiculo = (CabecalhoVeiculo* ) malloc(sizeof(CabecalhoVeiculo));
-    
-
-    //escreve status 0
-    // fseek(fw, 0, SEEK_SET);
-    fseek(fw, 1, SEEK_SET);
-    //cabecalhoVeiculo->status = '0';
-    // cabecalhoVeiculo->status = '1';
-    // fwrite(cabecalhoVeiculo, sizeof(char), 1, fw); //status byte
-    
-    
     //cria o arquivo da árvore b
     FILE* fb= fopen(treeFile, "w+");    
     if(fb == NULL){
-        printf("Falha no processamento do arquivoB.\n");
+        printf("Falha no processamento do arquivo.\n");
         return EXIT_FAILURE;
     }
-    //inicializa cabecalho do arquivo da árvore-b
+
+    //atualiza status e lê cabecalho do arquivo de dados
+    CabecalhoVeiculo* cabecalhoVeiculo = (CabecalhoVeiculo* ) malloc(sizeof(CabecalhoVeiculo));
+    cabecalhoVeiculo->status = '0';
+    fwrite(cabecalhoVeiculo, sizeof(char), 1, fw);
+    readBinaryHeaderVeiculo(fw, cabecalhoVeiculo); 
+
+    //atualiza status e inicializa cabecalho do arquivo da árvore-b
     CabecalhoArvore* cabecalhoArvore = (CabecalhoArvore*) malloc(sizeof(CabecalhoArvore));
-    
-    //valores iniciais
-    cabecalhoArvore->status ='0';
+    cabecalhoArvore->status = '0';
+    fwrite(cabecalhoArvore, sizeof(char), 1, fb);
+
     cabecalhoArvore->noRaiz = -1;
     cabecalhoArvore->RRNproxNo = 0;
     memset(cabecalhoArvore->lixo, '@', 68); //preenche com lixo
+    fseek(fb, 0, SEEK_SET);
     writeHeaderTree(fb, cabecalhoArvore);
 
-    //le o cabecalho inteiro do arquivo de dados
-    readBinaryHeaderVeiculo(fw, cabecalhoVeiculo); 
-    printf("leu cabeçalho\n");
-    
-    
+    //cria o nó raiz zerado, como folha
+    NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
+    inicializaNoArvore(noRaiz, '1', cabecalhoArvore);
+    cabecalhoArvore->RRNproxNo = 1;
+    cabecalhoArvore->noRaiz = 0;
+    noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
+    //escreve o nó raiz na árvore
+    writeNoArvore(fb, noRaiz, cabecalhoArvore);
 
-    //se o arquivo nao estiver vazio
+    free(noRaiz);
+
+    //se o arquivo nao estiver vazio, constrói árvore
     if(cabecalhoVeiculo->nroRegistros > 0) {
-        cabecalhoArvore->noRaiz = 0;
-
-        //cria o nó raiz zerado, como folha
-        NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
-        inicializaNoArvore(noRaiz, '1', cabecalhoArvore);
-        noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
-        cabecalhoArvore->RRNproxNo = 1;
-        //escreve o nó raiz na árvore
-        writeNoArvore(fb, noRaiz, cabecalhoArvore);
-
+       
         //loop no numero total de registros
-        int totalRegistros = cabecalhoVeiculo->nroRegistros;
+        int totalRegistros = cabecalhoVeiculo->nroRegistros + cabecalhoVeiculo->nroRegRemovidos;
+        
         for(int cont = 0; cont < totalRegistros; cont++) {
          
-        // for(int cont = 0; cont < 6; cont++) {
+        // for(int cont = 0; cont < 7; cont++) {
             printf("\n--------");
             printf("\nIteração: %d\n", cont);
-            printf("Nó Raiz: %d\n", noRaiz->RRNdoNo);
+            
+            //le posicao do cursor antes da leitura do registro
+            int byteOffset = ftell(fw);
+
             //le o registro atual
             Veiculo* veiculo = (Veiculo* ) malloc(sizeof(Veiculo));
             readBinaryDataRegisterVeiculo(fw, veiculo);
+            printBinaryDataRegisterVeiculo(cabecalhoVeiculo, veiculo);
             
             // se não foi removido, insere na árvore
             if(veiculo->removido == '1'){
                 
-                //converte o prefixo para inteiro e lê byteoffset
-                int prefixoConvertido = convertePrefixo(veiculo->prefixo);
-                int byteOffsetVeiculo = ftell(fw);
-                
                 //cria chave com prefixo e byteOffset. inicialmente vai tentar inserir no nó raiz
                 Chave* chaveAInserir = malloc(sizeof(Chave));
                 
+                //converte o prefixo para inteiro e lê byteoffset
+                chaveAInserir->C = convertePrefixo(veiculo->prefixo);
+                chaveAInserir->Pr = byteOffset;
+            
                 chaveAInserir->P = -1;
-                chaveAInserir->C = prefixoConvertido;
-                chaveAInserir->Pr = byteOffsetVeiculo;
-                
-                //printf("%d\n", chaveAInserir->C);
                 
                 //insere na arvore e atualiza cabecalhoArvore
                 insereVeiculoEmArvoreNova(
                     fb,
                     cabecalhoArvore,
-                    noRaiz,
-                    chaveAInserir);
+                    chaveAInserir
+                );
+                
+                //escreve cabeçalho atualizado no arquivo
+                fseek(fb, 0, SEEK_SET);
+                writeHeaderTree(fb, cabecalhoArvore);
 
                 free(chaveAInserir);
             }
@@ -781,39 +773,147 @@ int criaArvoreVeiculos() {
         cabecalhoArvore->status='1';
         writeHeaderTree(fb, cabecalhoArvore);
 
-        free(noRaiz);
         free(cabecalhoArvore);
-        printf("liberou cabeçalho");
         
-        binarioNaTela(treeFile);
         fclose(fb);
-        printf("liberou cabeçalho2");
+        binarioNaTela(treeFile);
+        
     }
     else {
-        printf("não é maior que zero\n");
         printf("Falha no processamento do arquivo.\n");
+
     }
 
-    /*
-    //atualiza status 1
-    fseek(fw, 0, SEEK_SET);
-    cabecalhoVeiculo->status = '1';
-
-    //escreve cabecalho atualizado
-    fwrite(cabecalhoVeiculo, sizeof(char), 1, fw); //status byte
-    */
     printf("%d %d %d", cabecalhoVeiculo->nroRegistros, cabecalhoVeiculo->status, cabecalhoVeiculo->nroRegRemovidos);
     free(cabecalhoVeiculo);
 
-    fclose(fw);
-    printf("fechou");
+    fclose(fw);    
 
     return EXIT_SUCCESS;
 }
 
 
 int criaArvoreLinhas() {
-    return 0;
+    //le arquivos da entrada do usuário
+    char binaryFile[100];
+    char treeFile[100];
+
+    scanf("%[^ ]", binaryFile); // le nome do arquivo até espaço
+    scanf("%*c"); // le espaco
+    scanf("%[^\n]", treeFile); // le nome do arquivo até fim da linha
+        
+    //tenta abrir arquivo de dados
+    FILE* fw= fopen(binaryFile, "rb+");    
+    if(fw == NULL){
+        printf("Falha no processamento do arquivo.\n");
+        return EXIT_FAILURE;
+    }
+    
+    //cria o arquivo da árvore b
+    FILE* fb= fopen(treeFile, "w+");    
+    if(fb == NULL){
+        printf("Falha no processamento do arquivo.\n");
+        return EXIT_FAILURE;
+    }
+
+    //atualiza status e lê cabecalho do arquivo de dados
+    CabecalhoLinha* cabecalhoLinha = (CabecalhoLinha* ) malloc(sizeof(CabecalhoLinha));
+    cabecalhoLinha->status = '0';
+    fwrite(cabecalhoLinha, sizeof(char), 1, fw);
+    readBinaryHeaderVeiculo(fw, cabecalhoLinha); 
+
+    //atualiza status e inicializa cabecalho do arquivo da árvore-b
+    CabecalhoArvore* cabecalhoArvore = (CabecalhoArvore*) malloc(sizeof(CabecalhoArvore));
+    cabecalhoArvore->status = '0';
+    fwrite(cabecalhoArvore, sizeof(char), 1, fb);
+
+    cabecalhoArvore->noRaiz = -1;
+    cabecalhoArvore->RRNproxNo = 0;
+    memset(cabecalhoArvore->lixo, '@', 68); //preenche com lixo
+    fseek(fb, 0, SEEK_SET);
+    writeHeaderTree(fb, cabecalhoArvore);
+
+    //cria o nó raiz zerado, como folha
+    NoArvore* noRaiz = (NoArvore*) malloc(sizeof(NoArvore));
+    inicializaNoArvore(noRaiz, '1', cabecalhoArvore);
+    cabecalhoArvore->RRNproxNo = 1;
+    cabecalhoArvore->noRaiz = 0;
+    noRaiz->RRNdoNo = cabecalhoArvore->noRaiz;
+    //escreve o nó raiz na árvore
+    writeNoArvore(fb, noRaiz, cabecalhoArvore);
+
+    free(noRaiz);
+
+    //se o arquivo nao estiver vazio, constrói árvore
+    if(cabecalhoLinha->nroRegistros > 0) {
+       
+        //loop no numero total de registros
+        int totalRegistros = cabecalhoLinha->nroRegistros + cabecalhoLinha->nroRegRemovidos;
+        
+        for(int cont = 0; cont < totalRegistros; cont++) {
+         
+        // for(int cont = 0; cont < 7; cont++) {
+            printf("\n--------");
+            printf("\nIteração: %d\n", cont);
+            
+            //le posicao do cursor antes da leitura do registro
+            int byteOffset = ftell(fw);
+
+            //le o registro atual
+            Linha* linha = (Linha* ) malloc(sizeof(Linha));
+            readBinaryDataRegisterVeiculo(fw, linha);
+            printBinaryDataRegisterVeiculo(cabecalhoLinha, linha);
+            
+            // se não foi removido, insere na árvore
+            if(linha->removido == '1'){
+                
+                //cria chave com prefixo e byteOffset. inicialmente vai tentar inserir no nó raiz
+                Chave* chaveAInserir = malloc(sizeof(Chave));
+                
+                //converte o prefixo para inteiro e lê byteoffset
+                chaveAInserir->C = linha->codLinha;
+                chaveAInserir->Pr = byteOffset;
+            
+                chaveAInserir->P = -1;
+                
+                //insere na arvore e atualiza cabecalhoArvore
+                insereVeiculoEmArvoreNova(
+                    fb,
+                    cabecalhoArvore,
+                    chaveAInserir
+                );
+                
+                //escreve cabeçalho atualizado no arquivo
+                fseek(fb, 0, SEEK_SET);
+                writeHeaderTree(fb, cabecalhoArvore);
+
+                free(chaveAInserir);
+            }
+
+            free(linha);
+        }
+        
+        //escreve cabecalho da arvore no arquivo
+        fseek(fb, 0, SEEK_SET);
+        cabecalhoArvore->status='1';
+        writeHeaderTree(fb, cabecalhoArvore);
+
+        free(cabecalhoArvore);
+        
+        fclose(fb);
+        binarioNaTela(treeFile);
+        
+    }
+    else {
+        printf("Falha no processamento do arquivo.\n");
+
+    }
+
+    free(cabecalhoLinha);
+
+    fclose(fw);    
+
+    return EXIT_SUCCESS;
 }
 int buscaArvoreVeiculos() {
     return 0;
@@ -836,14 +936,14 @@ int insereVeiculosArvore() {
     //tenta abrir arquivo de dados
     FILE* fw= fopen(binaryFile, "rb+");    
     if(fw == NULL){
-        printf("Falha no processamento do arquivo1.\n");
+        printf("Falha no processamento do arquivo.\n");
         return EXIT_FAILURE;
     }
 
     //abre o arquivo da árvore b
     FILE* fb= fopen(treeFile, "rb+");    
     if(fb == NULL){
-        printf("Falha no processamento do arquivo2.\n");
+        printf("Falha no processamento do arquivo.\n");
         return EXIT_FAILURE;
     }
 

@@ -18,7 +18,7 @@ void insereChaveEmArvoreExistente(FILE* fb, CabecalhoArvore* cabecalhoArvore, Ch
 void leVeiculoASerInserido(Veiculo* veiculo);
 void leLinhaASerInserida(Linha* linha);
 
-void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, NoArvore* noRaiz, Chave* chaveAInserir);
+void insereVeiculoEmArvoreNova(FILE* fb, CabecalhoArvore* cabecalhoArvore, Chave* chaveAInserir);
 int desceNaArvore( FILE* fb, NoArvore* noArvore, Chave* chaveAInserir, CabecalhoArvore* cabecalhoArvore);
 
 #endif
