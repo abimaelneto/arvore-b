@@ -847,23 +847,24 @@ int insereVeiculosArvore() {
         return EXIT_FAILURE;
     }
 
-    //lê cabecalho do arquivo da árvore-b
+    //atualiza status e lê cabecalho do arquivo da árvore-b
     CabecalhoArvore* cabecalhoArvore = (CabecalhoArvore*) malloc(sizeof(CabecalhoArvore));
+    cabecalhoArvore->status = '0';
+    fwrite(cabecalhoArvore, sizeof(char), 1, fb);
+    fseek(fb, 0, SEEK_SET);
     readHeaderTree(fb, cabecalhoArvore);
 
-    //le o cabecalho inteiro do arquivo de dados
+    //atualiza status e lê cabecalho do arquivo de dados
     CabecalhoVeiculo* cabecalhoVeiculo = (CabecalhoVeiculo* ) malloc(sizeof(CabecalhoVeiculo));
+    cabecalhoVeiculo->status = '0';
+    fwrite(cabecalhoVeiculo, sizeof(char), 1, fw);
     readBinaryHeaderVeiculo(fw, cabecalhoVeiculo); 
-    //escreve status 0
     // fseek(fw, 0, SEEK_SET);
-    fseek(fw, 1, SEEK_SET);
-    //cabecalhoVeiculo->status = '0';
     // cabecalhoVeiculo->status = '1';
     // fwrite(cabecalhoVeiculo, sizeof(char), 1, fw); //status byte
-
     
-    // for(int cont = 0; cont < nEntradas; cont++) {
-    for(int cont = 0; cont < 1; cont++) {
+    for(int cont = 0; cont < nEntradas; cont++) {
+    // for(int cont = 0; cont < 1; cont++) {
         
         Veiculo* veiculo =(Veiculo* ) malloc(sizeof(Veiculo));
         
@@ -877,6 +878,8 @@ int insereVeiculosArvore() {
         chaveAInserir->C = convertePrefixo(veiculo->prefixo);
         chaveAInserir->Pr = cabecalhoVeiculo->byteProxReg;
         
+        printf("%ld", cabecalhoVeiculo->byteProxReg);
+        
         chaveAInserir->P = -1;
 
         //insere na árvore B
@@ -884,9 +887,15 @@ int insereVeiculosArvore() {
 
         //posiciona cursor na proxima posicao disponível e escreve
         fseek(fw, chaveAInserir->Pr, SEEK_SET);
-        printf("não está escrevendo no arquivo de dados\n");
-        // writeBinaryDataRegisterVeiculo(fw, veiculo);
-         
+        // printf("não está escrevendo no arquivo de dados\n");
+        writeBinaryDataRegisterVeiculo(fw, veiculo);
+
+        //atualiza cabecalho do arquivo de dados com byte do próximo registro e número de registros
+        cabecalhoVeiculo->byteProxReg = ftell(fw);
+        cabecalhoVeiculo->nroRegistros++;
+        fseek(fw, 1, SEEK_SET);
+        writeBinaryHeaderVeiculo(fw, cabecalhoVeiculo);
+
         printf("\n--------");
         printf("\nIteração: %d\n", cont);
 
@@ -899,24 +908,21 @@ int insereVeiculosArvore() {
     //escreve cabecalho da arvore no arquivo
     fseek(fb, 0, SEEK_SET);
     cabecalhoArvore->status='1';
-    printf("não atualiza cabeçalho árvore");
-    //writeHeaderTree(fb, cabecalhoArvore);
+    writeHeaderTree(fb, cabecalhoArvore);
     
     free(cabecalhoArvore);
-    printf("liberou cabeçalho");
     
-    binarioNaTela(treeFile);
     fclose(fb);
-    printf("liberou cabeçalho2");
+    binarioNaTela(treeFile);
 
-    /*
+    
     //atualiza status 1
     fseek(fw, 0, SEEK_SET);
     cabecalhoVeiculo->status = '1';
 
     //escreve cabecalho atualizado
     fwrite(cabecalhoVeiculo, sizeof(char), 1, fw); //status byte
-    */
+    
     free(cabecalhoVeiculo);
 
     fclose(fw);

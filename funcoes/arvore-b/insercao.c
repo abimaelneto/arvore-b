@@ -25,8 +25,8 @@ int insereChave(
         
         //pulamos para o nó a ser escrito
         fseek(fb, byteOffsetNoArvore, SEEK_SET);
-        printf("não está salvando no arquivo de árvore");
-        //writeNoArvore(fb, noArvore, cabecalhoArvore);
+        // printf("não está salvando no arquivo de árvore");
+        writeNoArvore(fb, noArvore, cabecalhoArvore);
         if(noArvore->P5 == 0) {
             printf("PELO AMOR DE DEUS, RRN");
         }
