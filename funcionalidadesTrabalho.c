@@ -752,7 +752,7 @@ int criaArvoreVeiculos() {
                 chaveAInserir->P = -1;
                 
                 //insere na arvore e atualiza cabecalhoArvore
-                insereVeiculoEmArvoreNova(
+                insereChaveEmArvoreNova(
                     fb,
                     cabecalhoArvore,
                     chaveAInserir
@@ -820,7 +820,7 @@ int criaArvoreLinhas() {
     CabecalhoLinha* cabecalhoLinha = (CabecalhoLinha* ) malloc(sizeof(CabecalhoLinha));
     cabecalhoLinha->status = '0';
     fwrite(cabecalhoLinha, sizeof(char), 1, fw);
-    readBinaryHeaderVeiculo(fw, cabecalhoLinha); 
+    readBinaryHeaderLinha(fw, cabecalhoLinha); 
 
     //atualiza status e inicializa cabecalho do arquivo da árvore-b
     CabecalhoArvore* cabecalhoArvore = (CabecalhoArvore*) malloc(sizeof(CabecalhoArvore));
@@ -861,8 +861,8 @@ int criaArvoreLinhas() {
 
             //le o registro atual
             Linha* linha = (Linha* ) malloc(sizeof(Linha));
-            readBinaryDataRegisterVeiculo(fw, linha);
-            printBinaryDataRegisterVeiculo(cabecalhoLinha, linha);
+            readBinaryDataRegisterLinha(fw, linha);
+            // printBinaryDataRegisterLinha(cabecalhoLinha, linha);
             
             // se não foi removido, insere na árvore
             if(linha->removido == '1'){
@@ -877,7 +877,7 @@ int criaArvoreLinhas() {
                 chaveAInserir->P = -1;
                 
                 //insere na arvore e atualiza cabecalhoArvore
-                insereVeiculoEmArvoreNova(
+                insereChaveEmArvoreNova(
                     fb,
                     cabecalhoArvore,
                     chaveAInserir
